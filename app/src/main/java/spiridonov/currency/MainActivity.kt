@@ -4,7 +4,8 @@ import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
-import android.widget.ListView
+import android.widget.ListAdapter
+import android.widget.SimpleAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -12,20 +13,21 @@ import org.json.JSONException
 import org.json.JSONObject
 
 
-class MainActivity : AppCompatActivity() /*, CoroutineScope by MainScope()*/ {
+class MainActivity : AppCompatActivity() {
     private lateinit var pDialog: ProgressDialog
-    private lateinit var listView: ListView
+
     private val url = "https://www.cbr-xml-daily.ru/daily_json.js"
     lateinit var currList: ArrayList<HashMap<String, String>>
+    private var needToUpdate = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         currList = ArrayList()
-        listView = currencyList
 
-        GetCurrency().execute()
+        if (needToUpdate) GetCurrency().execute()
+
 
     }
 
@@ -46,10 +48,16 @@ class MainActivity : AppCompatActivity() /*, CoroutineScope by MainScope()*/ {
                 val valute = jsonObjects.getJSONObject("Valute")
                 val allKeys = valute.keys()
 
-                for (i in 0 until valute.length()) {
-                    Log.d("Valute ID", valute.getString(allKeys.next()).toString())
-
+                while (allKeys.hasNext()) {
+                    val myObj = valute.getJSONObject(allKeys.next())
+                    val currencyMap = HashMap<String, String>()
+                    currencyMap["code"] = myObj.getString("CharCode")
+                    currencyMap["name"] = myObj.getString("Name")
+                    currencyMap["value"] = myObj.getString("Value")
+                    currencyMap["previous"] = myObj.getString("Previous")
+                    currList.add(currencyMap)
                 }
+
             } catch (e: JSONException) {
                 Log.e("JSONException", "Json parsing error: " + e.message.toString());
                 runOnUiThread {
@@ -68,6 +76,14 @@ class MainActivity : AppCompatActivity() /*, CoroutineScope by MainScope()*/ {
             super.onPostExecute(result)
             if (pDialog.isShowing)
                 pDialog.dismiss();
+            val adapter: ListAdapter = SimpleAdapter(
+                this@MainActivity,
+                currList,
+                R.layout.each_currency,
+                arrayOf("code", "name", "value", "previous"),
+                intArrayOf(R.id.txtID, R.id.txtName, R.id.txtValue, R.id.txtPrevious)
+            )
+            currencyList.adapter = adapter
         }
     }
 }
