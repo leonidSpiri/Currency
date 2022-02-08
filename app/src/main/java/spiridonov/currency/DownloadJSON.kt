@@ -9,10 +9,10 @@ import java.net.URL
 
 
 class DownloadJSON {
-    fun connection(userURL:String):String{
+    fun connection(userURL: String): String {
         val responce: String
         val url = URL(userURL)
-        val conn:HttpURLConnection = url.openConnection() as HttpURLConnection
+        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
         conn.requestMethod = "GET"
         val scanner = BufferedInputStream(conn.inputStream)
         responce = convertScanToString(scanner)

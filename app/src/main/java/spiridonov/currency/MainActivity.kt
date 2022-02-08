@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pDialog: ProgressDialog
     private lateinit var msp: SharedPreferences
     private val url = "https://www.cbr-xml-daily.ru/daily_json.js"
-    private var needToUpdate = true
+    private var needToUpdate = false
     private lateinit var nameValueList: HashMap<String, Double>
     private lateinit var nameCodeList: HashMap<String, String>
     private lateinit var listNameCurr: MutableList<String>
@@ -56,6 +56,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
+
+        txtEnter.setOnClickListener { convertCurr() }
     }
 
     private fun convertCurr() {
@@ -71,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 scndNumb == -1.0 -> enterSum *= firstNumb
                 else -> enterSum = (enterSum * firstNumb) / scndNumb
             }
-            val str = "$enter $firstValute = ${String.format("%.3f", enterSum)} $scndValute"
+            val str = "$enter $firstValute = ${String.format("%.4f", enterSum)} $scndValute"
             txtCurr.text = str
         }
     }
@@ -93,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 value /= nominal
                 currencyMap["code"] = code
                 currencyMap["name"] = name
-                currencyMap["value"] = value.toString()
+                currencyMap["value"] = String.format("%.4f", value)
                 currencyMap["previous"] = myObj.getString("Previous")
                 currList.add(currencyMap)
                 nameValueList[name] = value
