@@ -18,56 +18,61 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pDialog: ProgressDialog
     private lateinit var msp: SharedPreferences
     private val url = "https://www.cbr-xml-daily.ru/daily_json.js"
-    private var needToUpdate = false
-    private lateinit var listToConvert: HashMap<String, Double>
-    private var firstCurr = 0.0
-    private var scndCurr = 0.0
-
+    private var needToUpdate = true
+    private lateinit var nameValueList: HashMap<String, Double>
+    private lateinit var nameCodeList: HashMap<String, String>
+    private lateinit var listNameCurr: MutableList<String>
+    private lateinit var listnameValue: Array<Array<String?>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        listnameValue = Array(2) { arrayOfNulls(2) }
         msp = getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
-        listToConvert = hashMapOf()
+        nameValueList = hashMapOf()
+        nameCodeList = hashMapOf()
+        listNameCurr = mutableListOf()
         var currString = ""
         if (msp.contains(KEY_CURRENCY)) currString = msp.getString(KEY_CURRENCY, "").toString()
         if (needToUpdate || currString.isEmpty()) GetCurrency().execute()
         else parsingData(jsonString = currString)
-        val listNameCurr: MutableList<String> = listToConvert.keys.toMutableList()
-        listNameCurr.add("Российский рубль")
-        val adapterCurrency: ArrayAdapter<String> =
-            ArrayAdapter<String>(
-                this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, listNameCurr)
 
-        adapterCurrency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner1.adapter = adapterCurrency
-        spinner2.adapter = adapterCurrency
 
-        spinner1.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
+        spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                firstCurr = listToConvert.getOrDefault(listNameCurr[p2], -1.0)
+                listnameValue[0][0] = listNameCurr[p2]
+                listnameValue[0][1] = nameValueList.getOrDefault(listNameCurr[p2], 1.0).toString()
+                convertCurr()
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
-        spinner2.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
+        spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                scndCurr = listToConvert.getOrDefault(listNameCurr[p2], -1.0)
+                listnameValue[1][0] = listNameCurr[p2]
+                listnameValue[1][1] = nameValueList.getOrDefault(listNameCurr[p2], 1.0).toString()
+                convertCurr()
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
     }
 
-    private fun convertCurr(){
-        /*Если РУБ первый, то ввод / на value второго
-        Если РУБ второй, то ввод * на value первого
-        Если не РУБ, то (ввод * value первого) / на value второго*/
-        if (firstCurr != 0.0 && scndCurr !=0.0){
-            if (firstCurr == -1.0){
-
+    private fun convertCurr() {
+        val enter = txtEnter.text.toString()
+        val firstNumb = listnameValue[0][1]?.toDouble()
+        val scndNumb = listnameValue[1][1]?.toDouble()
+        val firstValute = nameCodeList[listnameValue[0][0].toString()].toString()
+        val scndValute = nameCodeList[listnameValue[1][0].toString()].toString()
+        if (firstNumb != null && scndNumb != null && firstNumb != 0.0 && scndNumb != 0.0 && enter.isNotEmpty() && enter.toDouble() > 0.0) {
+            var enterSum = enter.toDouble()
+            when {
+                firstNumb == -1.0 -> enterSum /= scndNumb
+                scndNumb == -1.0 -> enterSum *= firstNumb
+                else -> enterSum = (enterSum * firstNumb) / scndNumb
             }
-            if (scndCurr == -1.0){
-
-            }
+            val str = "$enter $firstValute = ${String.format("%.3f", enterSum)} $scndValute"
+            txtCurr.text = str
         }
     }
 
@@ -82,17 +87,18 @@ class MainActivity : AppCompatActivity() {
                 val myObj = valute.getJSONObject(allKeys.next())
                 val currencyMap = HashMap<String, String>()
                 val name = myObj.getString("Name")
+                val code = myObj.getString("CharCode")
                 var value = myObj.getDouble("Value")
                 val nominal = myObj.getDouble("Nominal")
                 value /= nominal
-                currencyMap["code"] = myObj.getString("CharCode")
+                currencyMap["code"] = code
                 currencyMap["name"] = name
                 currencyMap["value"] = value.toString()
                 currencyMap["previous"] = myObj.getString("Previous")
                 currList.add(currencyMap)
-                listToConvert[name] = value
+                nameValueList[name] = value
+                nameCodeList[name] = code
             }
-            Log.d("parsingData", "parsingData")
         } catch (e: JSONException) {
             Log.e("JSONException", "Json parsing error: " + e.message.toString());
             runOnUiThread {
@@ -103,6 +109,16 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
+        listNameCurr = nameValueList.keys.toMutableList()
+        listNameCurr.add("Российский рубль")
+        val adapterCurrency: ArrayAdapter<String> =
+            ArrayAdapter<String>(
+                this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, listNameCurr
+            )
+
+        adapterCurrency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner1.adapter = adapterCurrency
+        spinner2.adapter = adapterCurrency
         showCurrency(dataList = currList)
     }
 
@@ -129,7 +145,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun doInBackground(vararg p0: Void?): Void? {
-            Log.d("doInBackground", "download currency")
             val downloadJSON = DownloadJSON()
             jsonString = downloadJSON.connection(url)
             return null
@@ -149,4 +164,3 @@ class MainActivity : AppCompatActivity() {
         const val KEY_CURRENCY = "currency"
     }
 }
-
