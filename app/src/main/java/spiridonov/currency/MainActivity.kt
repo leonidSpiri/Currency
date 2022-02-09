@@ -66,6 +66,11 @@ class MainActivity : AppCompatActivity() {
 
         txtEnter.setOnClickListener { convertCurr() }
 
+        pullToRefresh.setOnRefreshListener {
+            GetCurrency().execute()
+            pullToRefresh.isRefreshing = false
+        }
+
     }
 
     private fun checkForUpdates() {
@@ -81,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                         lastUpdate.get(
                             Calendar.YEAR
                         )
-                    }. Обновить базы?"
+                    }Обновить базы?"
                 )
                 .setPositiveButton("Да") { _, _ -> GetCurrency().execute() }
                 .setNegativeButton("Отмена", null)
@@ -98,11 +103,7 @@ class MainActivity : AppCompatActivity() {
         val scndValute = nameCodeList[listnameValue[1][0].toString()].toString()
         if (firstNumb != null && scndNumb != null && firstNumb != 0.0 && scndNumb != 0.0 && enter.isNotEmpty() && enter.toDouble() > 0.0) {
             var enterSum = enter.toDouble()
-            when {
-                firstNumb == -1.0 -> enterSum /= scndNumb
-                scndNumb == -1.0 -> enterSum *= firstNumb
-                else -> enterSum = (enterSum * firstNumb) / scndNumb
-            }
+            enterSum = (enterSum * firstNumb) / scndNumb
             val str = "$enter $firstValute = ${String.format("%.4f", enterSum)} $scndValute"
             txtCurr.text = str
         }
