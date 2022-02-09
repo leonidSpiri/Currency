@@ -8,8 +8,11 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -24,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         "https://www.cbr-xml-daily.ru/daily_json.js" //"https://www.cbr-xml-daily.ru//archive//2021//12//08//daily_json.js"
     private lateinit var nameValueList: HashMap<String, Double>
     private lateinit var nameCodeList: HashMap<String, String>
-    private lateinit var listNameCurr: MutableList<String>
+    private lateinit var listForSpiner: MutableList<String>
     private lateinit var listnameValue: Array<Array<String?>>
     private lateinit var lastUpdate: Calendar
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         msp = getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
         nameValueList = hashMapOf()
         nameCodeList = hashMapOf()
-        listNameCurr = mutableListOf()
+        listForSpiner = mutableListOf()
         var currString = ""
         if (msp.contains(KEY_CURRENCY)) currString = msp.getString(KEY_CURRENCY, "").toString()
         if (currString.isEmpty()) GetCurrency().execute()
@@ -47,8 +50,8 @@ class MainActivity : AppCompatActivity() {
 
         spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                listnameValue[0][0] = listNameCurr[p2]
-                listnameValue[0][1] = nameValueList.getOrDefault(listNameCurr[p2], 1.0).toString()
+                listnameValue[0][0] = listForSpiner[p2]
+                listnameValue[0][1] = nameValueList.getOrDefault(listForSpiner[p2], 1.0).toString()
                 convertCurr()
             }
 
@@ -56,8 +59,8 @@ class MainActivity : AppCompatActivity() {
         }
         spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                listnameValue[1][0] = listNameCurr[p2]
-                listnameValue[1][1] = nameValueList.getOrDefault(listNameCurr[p2], 1.0).toString()
+                listnameValue[1][0] = listForSpiner[p2]
+                listnameValue[1][1] = nameValueList.getOrDefault(listForSpiner[p2], 1.0).toString()
                 convertCurr()
             }
 
@@ -86,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                         lastUpdate.get(
                             Calendar.YEAR
                         )
-                    }Обновить базы?"
+                    }\nОбновить базы?"
                 )
                 .setPositiveButton("Да") { _, _ -> GetCurrency().execute() }
                 .setNegativeButton("Отмена", null)
@@ -110,7 +113,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun parsingData(jsonString: String) {
-        val currList: ArrayList<HashMap<String, String>> = ArrayList()
+        val currList: ArrayList<CurrCard> = ArrayList()
         try {
             val jsonObjects = JSONObject(jsonString)
             lastUpdate = Calendar.getInstance()
@@ -118,19 +121,19 @@ class MainActivity : AppCompatActivity() {
                 SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(jsonObjects.getString("Date"))
             val valute = jsonObjects.getJSONObject("Valute")
             val allKeys = valute.keys()
-
             while (allKeys.hasNext()) {
                 val myObj = valute.getJSONObject(allKeys.next())
-                val currencyMap = HashMap<String, String>()
                 val name = myObj.getString("Name")
                 val code = myObj.getString("CharCode")
                 var value = myObj.getDouble("Value")
                 val nominal = myObj.getDouble("Nominal")
                 value /= nominal
-                currencyMap["code"] = code
-                currencyMap["name"] = name
-                currencyMap["value"] = String.format("%.4f", value)
-                currencyMap["previous"] = myObj.getString("Previous")
+                val currencyMap = CurrCard(
+                    code = code,
+                    name = name,
+                    value = String.format("%.4f", value),
+                    previous = myObj.getString("Previous")
+                )
                 currList.add(currencyMap)
                 nameValueList[name] = value
                 nameCodeList[name] = code
@@ -146,11 +149,11 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
-        listNameCurr = nameValueList.keys.toMutableList()
-        listNameCurr.add("Российский рубль")
+        listForSpiner = nameValueList.keys.toMutableList()
+        listForSpiner.add("Российский рубль")
         val adapterCurrency: ArrayAdapter<String> =
             ArrayAdapter<String>(
-                this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, listNameCurr
+                this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, listForSpiner
             )
 
         adapterCurrency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -161,15 +164,13 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun showCurrency(dataList: ArrayList<HashMap<String, String>>) {
-        val adapter: ListAdapter = SimpleAdapter(
-            this@MainActivity,
-            dataList,
-            R.layout.each_currency,
-            arrayOf("code", "name", "value", "previous"),
-            intArrayOf(R.id.txtID, R.id.txtName, R.id.txtValue, R.id.txtPrevious)
-        )
-        currencyList.adapter = adapter
+    private fun showCurrency(dataList: ArrayList<CurrCard>) {
+        recycleView.setHasFixedSize(true)
+        val linearLayoutManager = LinearLayoutManager(this)
+        recycleView.layoutManager = linearLayoutManager
+        val adapter = CurrAdapter(currList = dataList)
+        recycleView.adapter = adapter
+
     }
 
 
