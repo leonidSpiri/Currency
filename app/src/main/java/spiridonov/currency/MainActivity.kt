@@ -1,5 +1,6 @@
 package spiridonov.currency
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,18 +13,20 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var pDialog: ProgressDialog
     private lateinit var msp: SharedPreferences
-    private val url = "https://www.cbr-xml-daily.ru/daily_json.js"
-    private var needToUpdate = false
+    private val url =
+        "https://www.cbr-xml-daily.ru/daily_json.js" //"https://www.cbr-xml-daily.ru//archive//2021//12//08//daily_json.js"
     private lateinit var nameValueList: HashMap<String, Double>
     private lateinit var nameCodeList: HashMap<String, String>
     private lateinit var listNameCurr: MutableList<String>
     private lateinit var listnameValue: Array<Array<String?>>
-
+    private lateinit var lastUpdate: Calendar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,8 +37,12 @@ class MainActivity : AppCompatActivity() {
         listNameCurr = mutableListOf()
         var currString = ""
         if (msp.contains(KEY_CURRENCY)) currString = msp.getString(KEY_CURRENCY, "").toString()
-        if (needToUpdate || currString.isEmpty()) GetCurrency().execute()
-        else parsingData(jsonString = currString)
+        if (currString.isEmpty()) GetCurrency().execute()
+        else {
+            parsingData(jsonString = currString)
+            checkForUpdates()
+        }
+
 
 
         spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -58,6 +65,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         txtEnter.setOnClickListener { convertCurr() }
+
+    }
+
+    private fun checkForUpdates() {
+        val calNow = Calendar.getInstance()
+        var month: Int = lastUpdate.get(Calendar.MONTH)
+        month++
+        calNow.time = Date()
+        if (calNow.after(lastUpdate)) {
+            AlertDialog.Builder(this)
+                .setTitle("Базы устарели")
+                .setMessage(
+                    "Последнее обновление: ${lastUpdate.get(Calendar.DAY_OF_MONTH)}.$month.${
+                        lastUpdate.get(
+                            Calendar.YEAR
+                        )
+                    }. Обновить базы?"
+                )
+                .setPositiveButton("Да") { _, _ -> GetCurrency().execute() }
+                .setNegativeButton("Отмена", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
+        }
     }
 
     private fun convertCurr() {
@@ -82,6 +112,9 @@ class MainActivity : AppCompatActivity() {
         val currList: ArrayList<HashMap<String, String>> = ArrayList()
         try {
             val jsonObjects = JSONObject(jsonString)
+            lastUpdate = Calendar.getInstance()
+            lastUpdate.time =
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(jsonObjects.getString("Date"))
             val valute = jsonObjects.getJSONObject("Valute")
             val allKeys = valute.keys()
 
@@ -101,6 +134,7 @@ class MainActivity : AppCompatActivity() {
                 nameValueList[name] = value
                 nameCodeList[name] = code
             }
+            nameCodeList["Российский рубль"] = "RUB"
         } catch (e: JSONException) {
             Log.e("JSONException", "Json parsing error: " + e.message.toString());
             runOnUiThread {
@@ -122,6 +156,7 @@ class MainActivity : AppCompatActivity() {
         spinner1.adapter = adapterCurrency
         spinner2.adapter = adapterCurrency
         showCurrency(dataList = currList)
+
     }
 
 
