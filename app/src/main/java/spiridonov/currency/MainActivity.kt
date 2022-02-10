@@ -46,8 +46,6 @@ class MainActivity : AppCompatActivity() {
             checkForUpdates()
         }
 
-
-
         spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 arrayNameValue[0][0] = listForSpiner[p2]
@@ -75,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
 
     private fun checkForUpdates() {
         val calNow = Calendar.getInstance()
@@ -115,8 +114,10 @@ class MainActivity : AppCompatActivity() {
     private fun parsingData(jsonString: String) {
         val currList: ArrayList<CurrCard> = ArrayList()
         var currFavourite = arrayListOf<String>()
-        if (msp.contains(CurrAdapter.KEY_FAVOURITE) && msp.getString(CurrAdapter.KEY_FAVOURITE, " , ") != "")
-            currFavourite = msp.getString(CurrAdapter.KEY_FAVOURITE, " , ")?.split(",") as ArrayList<String>
+        if (msp.contains(CurrAdapter.KEY_FAVOURITE) && msp.getString(
+                CurrAdapter.KEY_FAVOURITE, "") != "")
+            currFavourite =
+                msp.getString(CurrAdapter.KEY_FAVOURITE, " , ")?.split(",") as ArrayList<String>
         try {
             val jsonObjects = JSONObject(jsonString)
             lastUpdate = Calendar.getInstance()
@@ -124,7 +125,8 @@ class MainActivity : AppCompatActivity() {
                 SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(jsonObjects.getString("Date"))
             val valute = jsonObjects.getJSONObject("Valute")
             val allKeys = valute.keys()
-
+            listForSpiner.clear()
+            listForSpiner.add("Российский рубль")
             currFavourite.forEach {
                 if (it != "")
                     currList.add(parsing(valute = valute, it = it))
@@ -147,8 +149,7 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
-        listForSpiner = nameValueList.keys.toMutableList()
-        listForSpiner.add("Российский рубль")
+
         val adapterCurrency: ArrayAdapter<String> =
             ArrayAdapter<String>(
                 this,
@@ -177,6 +178,7 @@ class MainActivity : AppCompatActivity() {
         )
         nameValueList[name] = value
         nameCodeList[name] = code
+        listForSpiner.add(name)
         return currencyMap
     }
 

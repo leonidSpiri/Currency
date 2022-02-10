@@ -1,7 +1,6 @@
 package spiridonov.currency
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +36,7 @@ class CurrAdapter(private var currList: ArrayList<CurrCard>, private val context
         var favouriteList = arrayListOf<String>()
         if (msp.contains(KEY_FAVOURITE) && msp.getString(KEY_FAVOURITE, " , ") != "")
             favouriteList = msp.getString(KEY_FAVOURITE, "")?.split(",") as ArrayList<String>
-        if (favouriteList.contains(currList[position].code)){
+        if (favouriteList.contains(currList[position].code)) {
             holder.imgStar.setImageResource(R.drawable.star_rate)
         }
 
@@ -45,11 +44,10 @@ class CurrAdapter(private var currList: ArrayList<CurrCard>, private val context
             if (msp.contains(KEY_FAVOURITE) && msp.getString(KEY_FAVOURITE, " , ") != "")
                 favouriteList = msp.getString(KEY_FAVOURITE, "")?.split(",") as ArrayList<String>
 
-            if (favouriteList.contains(currList[position].code)){
+            if (favouriteList.contains(currList[position].code)) {
                 favouriteList.remove(currList[position].code)
                 holder.imgStar.setImageResource(R.drawable.star_no_rate)
-            }
-            else {
+            } else {
                 favouriteList.add(currList[position].code)
                 holder.imgStar.setImageResource(R.drawable.star_rate)
             }
@@ -57,10 +55,10 @@ class CurrAdapter(private var currList: ArrayList<CurrCard>, private val context
             favouriteList.forEach {
                 if (it != "") buff += "$it,"
             }
-            Log.d("onBindViewHolder", "value $buff")
             val editor = msp.edit()
             editor.putString(KEY_FAVOURITE, buff)
             editor.apply()
+
         }
     }
 
