@@ -21,14 +21,13 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var pDialog: ProgressDialog
-    private lateinit var msp: SharedPreferences
-    private val url =
-        "https://www.cbr-xml-daily.ru/daily_json.js" //"https://www.cbr-xml-daily.ru//archive//2021//12//08//daily_json.js"
-    private lateinit var nameValueList: HashMap<String, Double>
-    private lateinit var nameCodeList: HashMap<String, String>
-    private lateinit var listForSpiner: MutableList<String>
-    private lateinit var arrayNameValue: Array<Array<String?>>
+    private lateinit var pDialog: ProgressDialog // прогресс скачки базы данных
+    private lateinit var msp: SharedPreferences // SharedPreferences для сохрание данных в памяти
+    private val url = "https://www.cbr-xml-daily.ru/daily_json.js" // ссылка для скачивания json
+    private lateinit var nameValueList: HashMap<String, Double> // HashMap для хранение пары название валюты - ее цена
+    private lateinit var nameCodeList: HashMap<String, String> // HashMap для хранение пары название валюты - ее кода
+    private lateinit var listForSpiner: MutableList<String> // динамический массив для хранения названий валют. используется для списка
+    private lateinit var arrayNameValue: Array<Array<String?>> // двумерный массив для хранения имени и цены выбранной пользователем валюты
     private lateinit var lastUpdate: Calendar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         nameCodeList = hashMapOf()
         listForSpiner = mutableListOf()
         var currString = ""
-        if (msp.contains(KEY_CURRENCY)) currString = msp.getString(KEY_CURRENCY, "").toString()
-        if (currString.isEmpty()) GetCurrency().execute()
+        if (msp.contains(KEY_CURRENCY)) currString = msp.getString(KEY_CURRENCY, "").toString() // считывание данных из памяти (при наличие)
+        if (currString.isEmpty()) GetCurrency().execute() // если пермененная пустая, то скачать данные с сайта
         else {
             parsingData(jsonString = currString)
             checkForUpdates()
