@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.each_currency.view.*
 
-
+// класс адаптера для списка валют
 class CurrAdapter(private var currList: ArrayList<CurrCard>, private val context: Context) :
     RecyclerView.Adapter<CurrAdapter.ViewHolder>() {
 
@@ -33,6 +33,7 @@ class CurrAdapter(private var currList: ArrayList<CurrCard>, private val context
         holder.txtPrevious.text = "${currList[position].previous} ₽"
         holder.imgStar.setImageResource(R.drawable.star_no_rate)
         val msp = context.getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
+        // добавление и удаление избранных пользователем валют
         var favouriteList = arrayListOf<String>()
         if (msp.contains(KEY_FAVOURITE) && msp.getString(KEY_FAVOURITE, " , ") != "")
             favouriteList = msp.getString(KEY_FAVOURITE, "")?.split(",") as ArrayList<String>

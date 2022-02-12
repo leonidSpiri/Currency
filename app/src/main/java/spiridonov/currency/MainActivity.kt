@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -38,13 +40,14 @@ class MainActivity : AppCompatActivity() {
         nameCodeList = hashMapOf()
         listForSpiner = mutableListOf()
         var currString = ""
-        if (msp.contains(KEY_CURRENCY)) currString = msp.getString(KEY_CURRENCY, "").toString() // считывание данных из памяти (при наличие)
-        if (currString.isEmpty()) GetCurrency().execute() // если пермененная пустая, то скачать данные с сайта
+        if (msp.contains(KEY_CURRENCY)) currString =
+            msp.getString(KEY_CURRENCY, "").toString() // считывание данных из памяти (при наличие)
+        if (currString.isEmpty()) GetCurrency().execute() // если пермененная пустая, то скачиваем данные с сайта
         else {
-            parsingData(jsonString = currString)
-            checkForUpdates()
+            parsingData(jsonString = currString) // иначе сразу обрабатываем данные из памяти
+            checkForUpdates() // и проверяем нужно ли обновить данные
         }
-
+        // два слушателя пользовательских списков. Записывают в массив выбранные пользователем данные. Вызывают функцию перевода валюты
         spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 arrayNameValue[0][0] = listForSpiner[p2]
@@ -64,15 +67,28 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
-        txtEnter.setOnClickListener { convertCurr() }
+        // слушатель текстового поля. Вызывают функцию перевода валюты
+        txtEnter.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                convertCurr()
+            }
 
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+
+            }
+        })
+
+        // слушатель списка. если пользователь потянет вниз список, то базы обновятся
         pullToRefresh.setOnRefreshListener {
             GetCurrency().execute()
             pullToRefresh.isRefreshing = false
         }
     }
 
-
+    // функция проверки обновления. Если прошло более одного дня с последнего обновления, пользователю будет предложено обновить базы
     private fun checkForUpdates() {
         val calNow = Calendar.getInstance()
         var month: Int = lastUpdate.get(Calendar.MONTH)
@@ -97,6 +113,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // функция подсчета конвертации валюты. Берутся данные из массива и текстового поля
     private fun convertCurr() {
         val enter = txtEnter.text.toString()
         val firstNumb = arrayNameValue[0][1]?.toDouble()
@@ -111,11 +128,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //обработка строки входных данных.
     private fun parsingData(jsonString: String) {
         val currList: ArrayList<CurrCard> = ArrayList()
         var currFavourite = arrayListOf<String>()
         if (msp.contains(CurrAdapter.KEY_FAVOURITE) && msp.getString(
-                CurrAdapter.KEY_FAVOURITE, "") != "")
+                CurrAdapter.KEY_FAVOURITE, ""
+            ) != ""
+        )
             currFavourite =
                 msp.getString(CurrAdapter.KEY_FAVOURITE, " , ")?.split(",") as ArrayList<String>
         try {
@@ -127,11 +147,13 @@ class MainActivity : AppCompatActivity() {
             val allKeys = valute.keys()
             listForSpiner.clear()
             listForSpiner.add("Российский рубль")
+            // сначала в списке идут избранные пользователем валюты
             currFavourite.forEach {
                 if (it != "")
                     currList.add(parsing(valute = valute, it = it))
             }
 
+            // после этого все оставшиеся
             while (allKeys.hasNext()) {
                 val nextKey = allKeys.next()
                 if (currFavourite.contains(nextKey)) continue
@@ -163,13 +185,14 @@ class MainActivity : AppCompatActivity() {
         showCurrency(dataList = currList)
     }
 
+    // функция обработки каждой отдельной валюты
     private fun parsing(valute: JSONObject, it: String): CurrCard {
         val myObj = valute.getJSONObject(it)
         val name = myObj.getString("Name")
         val code = myObj.getString("CharCode")
         val nominal = myObj.getDouble("Nominal")
         val value = myObj.getDouble("Value") / nominal
-        val previous  =myObj.getDouble("Previous") / nominal
+        val previous = myObj.getDouble("Previous") / nominal
         val currencyMap = CurrCard(
             code = code,
             name = name,
@@ -183,6 +206,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    // функция генерации списка валют и вывода его на экран
     private fun showCurrency(dataList: ArrayList<CurrCard>) {
         recycleView.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(this)
@@ -192,6 +216,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    // асинхронный класс для скачивания JSON данных
     inner class GetCurrency : AsyncTask<Void?, Void?, Void?>() {
         private var jsonString = ""
         override fun onPreExecute() {
@@ -217,6 +242,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // константа для SharedPreferences
     companion object {
         const val KEY_CURRENCY = "currency"
     }

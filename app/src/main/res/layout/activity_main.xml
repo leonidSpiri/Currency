@@ -9,13 +9,25 @@
         android:id="@+id/linlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Перевод валют:"/>
+            android:text="@string/currency_exchange"
+            android:textColor="@color/main_200"
+            android:textSize="18dp" />
+
+        <EditText
+            android:id="@+id/txtEnter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="7"
+            android:hint="@string/enter_sum"
+            android:inputType="numberDecimal"
+            android:textColor="@color/main_200"
+            android:textColorHint="@color/main_200" />
 
         <Spinner
             android:id="@+id/spinner1"
@@ -27,15 +39,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/txtEnter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="7"
-            android:hint="Введите сумму"
-            android:textColorHint="@color/main_200"
-            android:textColor="@color/main_200"
-            android:inputType="numberDecimal" />
 
         <TextView
             android:id="@+id/txtCurr"
@@ -52,12 +55,12 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#000000" />
+            android:background="@color/line_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Все валюты (потяните для обновления):" />
+            android:text="@string/all_valute_text" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/pullToRefresh"
@@ -67,7 +70,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycleView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
+                android:layout_height="match_parent" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

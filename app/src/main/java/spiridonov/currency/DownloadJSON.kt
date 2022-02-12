@@ -7,7 +7,7 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-
+// класс скачивание JSON с сайта
 class DownloadJSON {
     fun connection(userURL: String): String {
         val responce: String
@@ -19,6 +19,7 @@ class DownloadJSON {
         return responce
     }
 
+    // конвертация потока в строку
     private fun convertScanToString(stream: BufferedInputStream): String {
         val reader = BufferedReader(InputStreamReader(stream))
         val sb = StringBuilder()
