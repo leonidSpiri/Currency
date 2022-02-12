@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
             GetCurrency().execute()
             pullToRefresh.isRefreshing = false
         }
-
     }
 
 
@@ -80,7 +79,9 @@ class MainActivity : AppCompatActivity() {
         var month: Int = lastUpdate.get(Calendar.MONTH)
         month++
         calNow.time = Date()
-        if (calNow.after(lastUpdate)) {
+        val buffCalendar = lastUpdate
+        buffCalendar.add(Calendar.HOUR_OF_DAY, 5)
+        if (buffCalendar.after(lastUpdate)) {
             AlertDialog.Builder(this)
                 .setTitle("Базы устарели")
                 .setMessage(
@@ -167,14 +168,14 @@ class MainActivity : AppCompatActivity() {
         val myObj = valute.getJSONObject(it)
         val name = myObj.getString("Name")
         val code = myObj.getString("CharCode")
-        var value = myObj.getDouble("Value")
         val nominal = myObj.getDouble("Nominal")
-        value /= nominal
+        val value = myObj.getDouble("Value") / nominal
+        val previous  =myObj.getDouble("Previous") / nominal
         val currencyMap = CurrCard(
             code = code,
             name = name,
             value = String.format("%.4f", value),
-            previous = myObj.getString("Previous")
+            previous = String.format("%.4f", previous)
         )
         nameValueList[name] = value
         nameCodeList[name] = code

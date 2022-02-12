@@ -29,8 +29,8 @@ class CurrAdapter(private var currList: ArrayList<CurrCard>, private val context
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.txtName.text = currList[position].name
         holder.txtCode.text = currList[position].code
-        holder.txtValue.text = currList[position].value
-        holder.txtPrevious.text = currList[position].previous
+        holder.txtValue.text = "${currList[position].value} ₽"
+        holder.txtPrevious.text = "${currList[position].previous} ₽"
         holder.imgStar.setImageResource(R.drawable.star_no_rate)
         val msp = context.getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
         var favouriteList = arrayListOf<String>()
