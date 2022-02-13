@@ -88,15 +88,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // функция проверки обновления. Если прошло более одного дня с последнего обновления, пользователю будет предложено обновить базы
+    // функция проверки обновления. Если прошло более одного дня с последнего обновления, пользователю будет предложено обновить базы.
+    // При этом учитывается что в воскресенье и понедельник курс не обновляется
     private fun checkForUpdates() {
-        val calNow = Calendar.getInstance()
-        var month: Int = lastUpdate.get(Calendar.MONTH)
+        var month = lastUpdate.get(Calendar.MONTH)
         month++
-        calNow.time = Date()
-        val buffCalendar = lastUpdate
-        buffCalendar.add(Calendar.HOUR_OF_DAY, 5)
-        if (buffCalendar.after(lastUpdate)) {
+        val buffCalendar = lastUpdate.clone() as Calendar
+        var timeOut = 24
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_WEEK)
+        if (day == Calendar.SUNDAY || day == Calendar.MONDAY) timeOut = 72
+        buffCalendar.add(Calendar.HOUR_OF_DAY, timeOut)
+        if (calendar.after(buffCalendar)) {
             AlertDialog.Builder(this)
                 .setTitle("Базы устарели")
                 .setMessage(
@@ -123,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         if (firstNumb != null && scndNumb != null && firstNumb != 0.0 && scndNumb != 0.0 && enter.isNotEmpty() && enter.toDouble() > 0.0) {
             var enterSum = enter.toDouble()
             enterSum = (enterSum * firstNumb) / scndNumb
-            val str = "$enter $firstValute = ${String.format("%.4f", enterSum)} $scndValute"
+            val str = "$enter $firstValute → ${String.format("%.2f", enterSum)} $scndValute"
             txtCurr.text = str
         }
     }
@@ -196,8 +199,8 @@ class MainActivity : AppCompatActivity() {
         val currencyMap = CurrCard(
             code = code,
             name = name,
-            value = String.format("%.4f", value),
-            previous = String.format("%.4f", previous)
+            value = String.format("%.2f", value),
+            previous = String.format("%.2f", previous)
         )
         nameValueList[name] = value
         nameCodeList[name] = code
@@ -213,6 +216,8 @@ class MainActivity : AppCompatActivity() {
         recycleView.layoutManager = linearLayoutManager
         val adapter = CurrAdapter(currList = dataList, context = applicationContext)
         recycleView.adapter = adapter
+        txtEnter.setText("")
+        txtCurr.text = ""
     }
 
 
