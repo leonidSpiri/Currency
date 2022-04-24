@@ -135,10 +135,7 @@ class MainActivity : AppCompatActivity() {
     private fun parsingData(jsonString: String) {
         val currList: ArrayList<CurrCard> = ArrayList()
         var currFavourite = arrayListOf<String>()
-        if (msp.contains(CurrAdapter.KEY_FAVOURITE) && msp.getString(
-                CurrAdapter.KEY_FAVOURITE, ""
-            ) != ""
-        )
+        if (msp.contains(CurrAdapter.KEY_FAVOURITE) && msp.getString(CurrAdapter.KEY_FAVOURITE, "") != "")
             currFavourite =
                 msp.getString(CurrAdapter.KEY_FAVOURITE, " , ")?.split(",") as ArrayList<String>
         try {
