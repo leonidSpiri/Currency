@@ -3,4 +3,6 @@
     <string name="currency_exchange">Перевод валют:</string>
     <string name="enter_sum">Введите сумму</string>
     <string name="all_valute_text">Все валюты (потяните для обновления):</string>
+    <string name="value">%s ₽</string>
+    <string name="previous_value">%s ₽</string>
 </resources>

@@ -1,4 +1,4 @@
-package spiridonov.currency
+package spiridonov.currency.presentation
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
@@ -15,9 +15,12 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
+import spiridonov.currency.data.DownloadJSON
+import spiridonov.currency.databinding.ActivityMainBinding
+import spiridonov.currency.domain.CurrInfo
+import spiridonov.currency.presentation.adapter.CurrInfoAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,9 +34,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var listForSpiner: MutableList<String> // динамический массив для хранения названий валют. используется для списка
     private lateinit var arrayNameValue: Array<Array<String?>> // двумерный массив для хранения имени и цены выбранной пользователем валюты
     private lateinit var lastUpdate: Calendar
+    private val binding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
         arrayNameValue = Array(2) { arrayOfNulls(2) }
         msp = getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
         nameValueList = hashMapOf()
@@ -48,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             checkForUpdates() // и проверяем нужно ли обновить данные
         }
         // два слушателя пользовательских списков. Записывают в массив выбранные пользователем данные. Вызывают функцию перевода валюты
-        spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 arrayNameValue[0][0] = listForSpiner[p2]
                 arrayNameValue[0][1] = nameValueList.getOrDefault(listForSpiner[p2], 1.0).toString()
@@ -57,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
-        spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 arrayNameValue[1][0] = listForSpiner[p2]
                 arrayNameValue[1][1] = nameValueList.getOrDefault(listForSpiner[p2], 1.0).toString()
@@ -68,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // слушатель текстового поля. Вызывают функцию перевода валюты
-        txtEnter.addTextChangedListener(object : TextWatcher {
+        binding.txtEnter.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 convertCurr()
             }
@@ -82,9 +88,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         // слушатель списка. если пользователь потянет вниз список, то базы обновятся
-        pullToRefresh.setOnRefreshListener {
+        binding. pullToRefresh.setOnRefreshListener {
             GetCurrency().execute()
-            pullToRefresh.isRefreshing = false
+            binding.pullToRefresh.isRefreshing = false
         }
     }
 
@@ -118,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     // функция подсчета конвертации валюты. Берутся данные из массива и текстового поля
     private fun convertCurr() {
-        val enter = txtEnter.text.toString()
+        val enter = binding.txtEnter.text.toString()
         val firstNumb = arrayNameValue[0][1]?.toDouble()
         val scndNumb = arrayNameValue[1][1]?.toDouble()
         val firstValute = nameCodeList[arrayNameValue[0][0].toString()].toString()
@@ -127,17 +133,17 @@ class MainActivity : AppCompatActivity() {
             var enterSum = enter.toDouble()
             enterSum = (enterSum * firstNumb) / scndNumb
             val str = "$enter $firstValute → ${String.format("%.2f", enterSum)} $scndValute"
-            txtCurr.text = str
+            binding.txtCurr.text = str
         }
     }
 
     //обработка строки входных данных.
     private fun parsingData(jsonString: String) {
-        val currList: ArrayList<CurrCard> = ArrayList()
+        val currList: ArrayList<CurrInfo> = ArrayList()
         var currFavourite = arrayListOf<String>()
-        if (msp.contains(CurrAdapter.KEY_FAVOURITE) && msp.getString(CurrAdapter.KEY_FAVOURITE, "") != "")
+        if (msp.contains(CurrInfoAdapter.KEY_FAVOURITE) && msp.getString(CurrInfoAdapter.KEY_FAVOURITE, "") != "")
             currFavourite =
-                msp.getString(CurrAdapter.KEY_FAVOURITE, " , ")?.split(",") as ArrayList<String>
+                msp.getString(CurrInfoAdapter.KEY_FAVOURITE, " , ")?.split(",") as ArrayList<String>
         try {
             val jsonObjects = JSONObject(jsonString)
             lastUpdate = Calendar.getInstance()
@@ -180,25 +186,26 @@ class MainActivity : AppCompatActivity() {
             )
 
         adapterCurrency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner1.adapter = adapterCurrency
-        spinner2.adapter = adapterCurrency
+        binding.spinner1.adapter = adapterCurrency
+        binding.spinner2.adapter = adapterCurrency
         showCurrency(dataList = currList)
     }
 
     // функция обработки каждой отдельной валюты
-    private fun parsing(valute: JSONObject, it: String): CurrCard {
+    private fun parsing(valute: JSONObject, it: String): CurrInfo {
         val myObj = valute.getJSONObject(it)
         val name = myObj.getString("Name")
         val code = myObj.getString("CharCode")
         val nominal = myObj.getDouble("Nominal")
         val value = myObj.getDouble("Value") / nominal
         val previous = myObj.getDouble("Previous") / nominal
-        val currencyMap = CurrCard(
+        val currencyMap = CurrInfo(
             code = code,
             name = name,
             value = String.format("%.2f", value),
             previous = String.format("%.2f", previous)
         )
+
         nameValueList[name] = value
         nameCodeList[name] = code
         listForSpiner.add(name)
@@ -207,14 +214,15 @@ class MainActivity : AppCompatActivity() {
 
 
     // функция генерации списка валют и вывода его на экран
-    private fun showCurrency(dataList: ArrayList<CurrCard>) {
-        recycleView.setHasFixedSize(true)
+    private fun showCurrency(dataList: ArrayList<CurrInfo>) {
+        binding.recycleView.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(this)
-        recycleView.layoutManager = linearLayoutManager
-        val adapter = CurrAdapter(currList = dataList, context = applicationContext)
-        recycleView.adapter = adapter
-        txtEnter.setText("")
-        txtCurr.text = ""
+        binding.recycleView.layoutManager = linearLayoutManager
+        val adapter = CurrInfoAdapter(this)
+        binding.recycleView.adapter = adapter
+        adapter.submitList(dataList)
+        binding.txtEnter.setText("")
+        binding.txtCurr.text = ""
     }
 
 

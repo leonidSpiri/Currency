@@ -1,4 +1,4 @@
-package spiridonov.currency
+package spiridonov.currency.data
 
 import java.io.BufferedInputStream
 import java.io.BufferedReader
