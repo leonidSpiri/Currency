@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="currInfo"
-            type="spiridonov.currency.domain.CurrInfo" />
+            name="currItem"
+            type="spiridonov.currency.domain.CurrItem" />
     </data>
 
     <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@{currInfo.code}"
+                android:text="@{currItem.code}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
-                android:text="@{currInfo.name}"
+                android:text="@{currItem.name}"
                 app:layout_constraintStart_toEndOf="@+id/textView1"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
-                android:text="@{currInfo.value}"
+                android:text="@{currItem.value}"
                 app:layout_constraintStart_toEndOf="@+id/textView3"
                 app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
-                android:text="@{currInfo.previous}"
+                android:text="@{currItem.previous}"
                 app:layout_constraintStart_toEndOf="@+id/textView5"
                 app:layout_constraintTop_toBottomOf="@+id/txtValue" />
 

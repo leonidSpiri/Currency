@@ -8,14 +8,14 @@ import androidx.recyclerview.widget.ListAdapter
 import spiridonov.currency.R
 import spiridonov.currency.databinding.EachCurrencyDisabledBinding
 import spiridonov.currency.databinding.EachCurrencyEnabledBinding
-import spiridonov.currency.domain.CurrInfo
+import spiridonov.currency.domain.CurrItem
 
 class CurrInfoAdapter :
-    ListAdapter<CurrInfo, CurrInfoViewHolder>(CurrInfoDiffCallback) {
+    ListAdapter<CurrItem, CurrItemViewHolder>(CurrInfoDiffCallback) {
 
-    var onCurrItemClickListener: ((CurrInfo) -> Unit)? = null
+    var onCurrItemClickListener: ((CurrItem) -> Unit)? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrInfoViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrItemViewHolder {
         val layoutID =
             when (viewType) {
                 CURR_STAR_ENABLED -> R.layout.each_currency_enabled
@@ -28,25 +28,25 @@ class CurrInfoAdapter :
             parent,
             false
         )
-        return CurrInfoViewHolder(binding)
+        return CurrItemViewHolder(binding)
     }
 
     override fun getItemViewType(position: Int) =
         if (getItem(position).star) CURR_STAR_ENABLED
         else CURR_STAR_DISABLED
 
-    override fun onBindViewHolder(holder: CurrInfoViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CurrItemViewHolder, position: Int) {
         val currency = getItem(position)
         with(holder.binding) {
             when (this) {
                 is EachCurrencyDisabledBinding -> {
-                    currInfo = currency
+                    currItem = currency
                     imgStar.setOnClickListener {
                         onCurrItemClickListener?.invoke(currency)
                     }
                 }
                 is EachCurrencyEnabledBinding -> {
-                    currInfo = currency
+                    currItem = currency
                     imgStar.setOnClickListener {
                         onCurrItemClickListener?.invoke(currency)
                     }

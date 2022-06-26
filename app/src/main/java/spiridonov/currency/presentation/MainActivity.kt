@@ -19,7 +19,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import spiridonov.currency.data.DownloadJSON
 import spiridonov.currency.databinding.ActivityMainBinding
-import spiridonov.currency.domain.CurrInfo
+import spiridonov.currency.domain.CurrItem
 import spiridonov.currency.presentation.adapter.CurrInfoAdapter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     //обработка строки входных данных.
     private fun parsingData(jsonString: String) {
-        val currList: ArrayList<CurrInfo> = ArrayList()
+        val currList: ArrayList<CurrItem> = ArrayList()
         var currFavourite = arrayListOf<String>()
         if (msp.contains(CurrInfoAdapter.KEY_FAVOURITE) && msp.getString(
                 CurrInfoAdapter.KEY_FAVOURITE,
@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // функция обработки каждой отдельной валюты
-    private fun parsing(valute: JSONObject, it: String): CurrInfo {
+    private fun parsing(valute: JSONObject, it: String): CurrItem {
         val myObj = valute.getJSONObject(it)
         val name = myObj.getString("Name")
         val code = myObj.getString("CharCode")
@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity() {
             if (!favouriteList.contains(code))
                 star = false
         }
-        val currencyMap = CurrInfo(
+        val currencyMap = CurrItem(
             code = code,
             name = name,
             value = String.format("%.2f", value),
@@ -233,7 +233,7 @@ class MainActivity : AppCompatActivity() {
 
 
     // функция генерации списка валют и вывода его на экран
-    private fun showCurrency(dataList: ArrayList<CurrInfo>) {
+    private fun showCurrency(dataList: ArrayList<CurrItem>) {
         binding.recycleView.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(this)
         binding.recycleView.layoutManager = linearLayoutManager
