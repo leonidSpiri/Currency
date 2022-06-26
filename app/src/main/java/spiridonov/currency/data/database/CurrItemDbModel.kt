@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity(tableName = "currencies")
-data class CurrListDbModel(
+data class CurrItemDbModel(
     @PrimaryKey
     val code: String,
     val name: String,

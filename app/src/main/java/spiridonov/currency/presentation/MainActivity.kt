@@ -18,8 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import org.json.JSONException
 import org.json.JSONObject
 import spiridonov.currency.data.network.DownloadJSON
+import spiridonov.currency.data.repository.CurrListRepositoryImpl
 import spiridonov.currency.databinding.ActivityMainBinding
 import spiridonov.currency.domain.CurrItem
+import spiridonov.currency.domain.LoadDataUseCase
 import spiridonov.currency.presentation.adapter.CurrInfoAdapter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -41,6 +43,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        val repository = CurrListRepositoryImpl(application)
+        val loadDataUseCase = LoadDataUseCase(repository)
+        loadDataUseCase()
         arrayNameValue = Array(2) { arrayOfNulls(2) }
         msp = getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
         nameValueList = hashMapOf()
