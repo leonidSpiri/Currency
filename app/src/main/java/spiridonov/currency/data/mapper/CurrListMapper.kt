@@ -1,5 +1,9 @@
 package spiridonov.currency.data.mapper
 
+import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import spiridonov.currency.data.database.CurrItemDbModel
 import spiridonov.currency.domain.CurrItem
@@ -46,27 +50,34 @@ class CurrListMapper {
         return JSONObject(sb.toString())
     }
 
-    fun mapDtoToListDbModel(dto: JSONObject): List<CurrItemDbModel> {
+    fun mapDtoToListDbModel(dto: JSONObject, oldCurrList: LiveData<List<CurrItem>>): List<CurrItemDbModel> {
         val currList = ArrayList<CurrItemDbModel>()
-        val allKeys = dto.keys()
-        allKeys.forEach {
-            val myObj = dto.getJSONObject(it)
-            val name = myObj.getString("Name")
-            val code = myObj.getString("CharCode")
-            val nominal = myObj.getDouble("Nominal")
-            val value = myObj.getDouble("Value") / nominal
-            val previous = myObj.getDouble("Previous") / nominal
-            val star = true
-            //TODO("star check logic")
-            currList.add(
-                CurrItemDbModel(
-                    code = code,
-                    name = name,
-                    value = String.format("%.2f", value),
-                    previous = String.format("%.2f", previous),
-                    star = star
+        CoroutineScope(Dispatchers.Default).launch {
+            val allKeys = dto.keys()
+            allKeys.forEach { key ->
+                val myObj = dto.getJSONObject(key)
+                val name = myObj.getString("Name")
+                val code = myObj.getString("CharCode")
+                val nominal = myObj.getDouble("Nominal")
+                val value = myObj.getDouble("Value") / nominal
+                val previous = myObj.getDouble("Previous") / nominal
+                var star = false
+                oldCurrList.value?.forEach {
+                    if (it.code == code) {
+                        star = it.star == true
+                    }
+                }
+                currList.add(
+                    CurrItemDbModel(
+                        code = code,
+                        name = name,
+                        value = String.format("%.2f", value),
+                        previous = String.format("%.2f", previous),
+                        star = star
+                    )
                 )
-            )
+            }
+
         }
         return currList
     }

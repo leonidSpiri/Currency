@@ -1,11 +1,15 @@
 package spiridonov.currency.workers
 
 import android.content.Context
-import android.util.Log
-import androidx.work.*
-import kotlinx.coroutines.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkerParameters
+import kotlinx.coroutines.delay
 import spiridonov.currency.data.database.AppDatabase
 import spiridonov.currency.data.mapper.CurrListMapper
+import spiridonov.currency.data.repository.CurrListRepositoryImpl
+import spiridonov.currency.domain.GetCurrListUseCase
 import java.io.BufferedInputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -14,27 +18,23 @@ class RefreshDataWorker(context: Context, workerParameters: WorkerParameters) : 
     (context, workerParameters) {
     private val currListDao = AppDatabase.getInstance(context).currListDao()
     private val mapper = CurrListMapper()
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val repository = CurrListRepositoryImpl(context)
+    private val getCurrListUseCase = GetCurrListUseCase(repository)
 
     override suspend fun doWork(): Result {
         while (true) {
             try {
+                //TODO("Do something with this errors (suspend functions && getCurrListUseCase)")
+                val url = URL(URL)
+                val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                val scanner = BufferedInputStream(conn.inputStream)
+                val currJsonObject = mapper.mapInputStreamToJsonObject(scanner)
+                val currList = getCurrListUseCase()
+                val jsonObject = currJsonObject.getJSONObject(JSON_OBJECT_KEY)
+                val currListDbModel = mapper.mapDtoToListDbModel(jsonObject, currList)
+                currListDao.insertCurrList(currListDbModel)
 
-                scope.launch {
-                    runCatching {
-                        val url = URL(URL)
-                        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                        conn.requestMethod = "GET"
-
-                        val scanner = BufferedInputStream(conn.inputStream)
-                        val currJsonObject = mapper.mapInputStreamToJsonObject(scanner)
-                    Log.d("RefreshDataWorker", currJsonObject.toString())
-                        val currListDbModel = mapper.mapDtoToListDbModel(currJsonObject.getJSONObject(
-                            JSON_OBJECT_KEY))
-
-                        currListDao.insertCurrList(currListDbModel)
-                   }
-                }
             } catch (e: Exception) {
             }
             delay(HALF_DAY_IN_MILLIS)

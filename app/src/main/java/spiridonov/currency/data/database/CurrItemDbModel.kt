@@ -11,5 +11,5 @@ data class CurrItemDbModel(
     val name: String,
     val value: String,
     val previous: String,
-    val star: Boolean = false
+    val star: Boolean
 )
