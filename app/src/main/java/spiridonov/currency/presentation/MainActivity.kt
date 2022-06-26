@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.json.JSONException
 import org.json.JSONObject
-import spiridonov.currency.data.DownloadJSON
+import spiridonov.currency.data.network.DownloadJSON
 import spiridonov.currency.databinding.ActivityMainBinding
 import spiridonov.currency.domain.CurrItem
 import spiridonov.currency.presentation.adapter.CurrInfoAdapter
