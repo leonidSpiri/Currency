@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+<layout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/curr_cardView"
+    <data>
+
+        <variable
+            name="currInfo"
+            type="spiridonov.currency.domain.CurrInfo" />
+    </data>
+
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:elevation="4dp"
+        app:cardCornerRadius="1dp"
+        app:cardUseCompatPadding="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -20,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="ID"
+                android:text="@{currInfo.code}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
-                android:text="Name"
+                android:text="@{currInfo.name}"
                 app:layout_constraintStart_toEndOf="@+id/textView1"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
-                android:text="Value"
+                android:text="@{currInfo.value}"
                 app:layout_constraintStart_toEndOf="@+id/textView3"
                 app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
@@ -99,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
-                android:text="Previous"
+                android:text="@{currInfo.previous}"
                 app:layout_constraintStart_toEndOf="@+id/textView5"
                 app:layout_constraintTop_toBottomOf="@+id/txtValue" />
 
@@ -117,8 +127,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
-
-    <Space
-        android:layout_width="4dp"
-        android:layout_height="4dp" />
-</LinearLayout>
+</layout>

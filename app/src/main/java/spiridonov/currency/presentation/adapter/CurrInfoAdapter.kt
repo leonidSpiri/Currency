@@ -1,73 +1,63 @@
 package spiridonov.currency.presentation.adapter
 
-import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import spiridonov.currency.R
-import spiridonov.currency.databinding.EachCurrencyBinding
+import spiridonov.currency.databinding.EachCurrencyDisabledBinding
+import spiridonov.currency.databinding.EachCurrencyEnabledBinding
 import spiridonov.currency.domain.CurrInfo
 
-// класс адаптера для списка валют
-class CurrInfoAdapter(private val context: Context) :
+class CurrInfoAdapter :
     ListAdapter<CurrInfo, CurrInfoViewHolder>(CurrInfoDiffCallback) {
 
+    var onCurrItemClickListener: ((CurrInfo) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrInfoViewHolder {
-        val binding = EachCurrencyBinding.inflate(
+        val layoutID =
+            when (viewType) {
+                CURR_STAR_ENABLED -> R.layout.each_currency_enabled
+                CURR_STAR_DISABLED -> R.layout.each_currency_disabled
+                else -> throw RuntimeException("Unknown view type: $viewType")
+            }
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
             LayoutInflater.from(parent.context),
+            layoutID,
             parent,
             false
         )
         return CurrInfoViewHolder(binding)
     }
 
+    override fun getItemViewType(position: Int) =
+        if (getItem(position).star) CURR_STAR_ENABLED
+        else CURR_STAR_DISABLED
 
     override fun onBindViewHolder(holder: CurrInfoViewHolder, position: Int) {
         val currency = getItem(position)
         with(holder.binding) {
-            with(currency) {
-                txtName.text = name
-                txtID.text = code
-                txtValue.text = context.resources.getString(R.string.value, value)
-                txtPrevious.text = context.resources.getString(R.string.previous_value, previous)
-                imgStar.setImageResource(R.drawable.star_no_rate)
-
+            when (this) {
+                is EachCurrencyDisabledBinding -> {
+                    currInfo = currency
+                    imgStar.setOnClickListener {
+                        onCurrItemClickListener?.invoke(currency)
+                    }
+                }
+                is EachCurrencyEnabledBinding -> {
+                    currInfo = currency
+                    imgStar.setOnClickListener {
+                        onCurrItemClickListener?.invoke(currency)
+                    }
+                }
             }
-        }
-        val msp = context.getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
-        // добавление и удаление избранных пользователем валют
-        var favouriteList = arrayListOf<String>()
-        if (msp.contains(KEY_FAVOURITE) && msp.getString(KEY_FAVOURITE, " , ") != "")
-            favouriteList = msp.getString(KEY_FAVOURITE, "")?.split(",") as ArrayList<String>
-        if (favouriteList.contains(currency.code)) {
-            holder.binding.imgStar.setImageResource(R.drawable.star_rate)
-        }
-
-        holder.binding.imgStar.setOnClickListener {
-            if (msp.contains(KEY_FAVOURITE) && msp.getString(KEY_FAVOURITE, " , ") != "")
-                favouriteList = msp.getString(KEY_FAVOURITE, "")?.split(",") as ArrayList<String>
-
-            if (favouriteList.contains(currency.code)) {
-                favouriteList.remove(currency.code)
-                holder.binding.imgStar.setImageResource(R.drawable.star_no_rate)
-            } else {
-                favouriteList.add(currency.code)
-                holder.binding.imgStar.setImageResource(R.drawable.star_rate)
-            }
-            var buff = ""
-            favouriteList.forEach {
-                if (it != "") buff += "$it,"
-            }
-            val editor = msp.edit()
-            editor.putString(KEY_FAVOURITE, buff)
-            editor.apply()
-
         }
     }
 
     companion object {
         const val KEY_FAVOURITE = "favourite"
+        private const val CURR_STAR_ENABLED = 1
+        private const val CURR_STAR_DISABLED = 0
     }
 }

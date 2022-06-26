@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         // слушатель списка. если пользователь потянет вниз список, то базы обновятся
-        binding. pullToRefresh.setOnRefreshListener {
+        binding.pullToRefresh.setOnRefreshListener {
             GetCurrency().execute()
             binding.pullToRefresh.isRefreshing = false
         }
@@ -141,7 +142,11 @@ class MainActivity : AppCompatActivity() {
     private fun parsingData(jsonString: String) {
         val currList: ArrayList<CurrInfo> = ArrayList()
         var currFavourite = arrayListOf<String>()
-        if (msp.contains(CurrInfoAdapter.KEY_FAVOURITE) && msp.getString(CurrInfoAdapter.KEY_FAVOURITE, "") != "")
+        if (msp.contains(CurrInfoAdapter.KEY_FAVOURITE) && msp.getString(
+                CurrInfoAdapter.KEY_FAVOURITE,
+                ""
+            ) != ""
+        )
             currFavourite =
                 msp.getString(CurrInfoAdapter.KEY_FAVOURITE, " , ")?.split(",") as ArrayList<String>
         try {
@@ -199,11 +204,25 @@ class MainActivity : AppCompatActivity() {
         val nominal = myObj.getDouble("Nominal")
         val value = myObj.getDouble("Value") / nominal
         val previous = myObj.getDouble("Previous") / nominal
+        var star = true
+        val msp = getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
+
+        if (msp.contains(CurrInfoAdapter.KEY_FAVOURITE) && msp.getString(
+                CurrInfoAdapter.KEY_FAVOURITE, " , "
+            ) != ""
+        ) {
+            var favouriteList = msp.getString(CurrInfoAdapter.KEY_FAVOURITE, "")
+                ?.split(",") as ArrayList<String>
+
+            if (!favouriteList.contains(code))
+                star = false
+        }
         val currencyMap = CurrInfo(
             code = code,
             name = name,
             value = String.format("%.2f", value),
-            previous = String.format("%.2f", previous)
+            previous = String.format("%.2f", previous),
+            star = star
         )
 
         nameValueList[name] = value
@@ -218,9 +237,36 @@ class MainActivity : AppCompatActivity() {
         binding.recycleView.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(this)
         binding.recycleView.layoutManager = linearLayoutManager
-        val adapter = CurrInfoAdapter(this)
+        val adapter = CurrInfoAdapter()
         binding.recycleView.adapter = adapter
         adapter.submitList(dataList)
+        adapter.onCurrItemClickListener = {
+            val msp = getSharedPreferences("AppMemory", Context.MODE_PRIVATE)
+            var favouriteList = arrayListOf<String>()
+            Log.d("Currency", "Star clicked: ${it.name}")
+            if (msp.contains(CurrInfoAdapter.KEY_FAVOURITE) && msp.getString(
+                    CurrInfoAdapter.KEY_FAVOURITE, " , "
+                ) != ""
+            )
+                favouriteList = msp.getString(CurrInfoAdapter.KEY_FAVOURITE, "")
+                    ?.split(",") as ArrayList<String>
+
+            if (favouriteList.contains(it.code))
+                favouriteList.remove(it.code)
+            else
+                favouriteList.add(it.code)
+
+            var buff = ""
+            favouriteList.forEach {
+                if (it != "") buff += "$it,"
+            }
+            val editor = msp.edit()
+            editor.putString(CurrInfoAdapter.KEY_FAVOURITE, buff)
+            editor.apply()
+            GetCurrency().execute()
+            binding.pullToRefresh.isRefreshing = false
+        }
+
         binding.txtEnter.setText("")
         binding.txtCurr.text = ""
     }
