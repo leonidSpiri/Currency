@@ -1,8 +1,8 @@
 package spiridonov.currency.domain
 
 class GetCurrItemUseCase(
-    private val currItemId:Int,
+    private val CurrItemCode:String,
     private val repository: CurrListRepository
 ) {
-    suspend operator fun invoke() = repository.getCurrItem(currItemId)
+    suspend operator fun invoke() = repository.getCurrItem(CurrItemCode)
 }

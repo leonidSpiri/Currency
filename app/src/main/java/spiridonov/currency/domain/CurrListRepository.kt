@@ -10,7 +10,7 @@ interface CurrListRepository {
 
     suspend fun editCurrItem(currItem: CurrItem)
 
-    suspend fun getCurrItem(CurrItemId: Int): CurrItem
+    suspend fun getCurrItem(CurrItemCode: String): CurrItem
 
     fun getCurrList(): LiveData<List<CurrItem>>
 

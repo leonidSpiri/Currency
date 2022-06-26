@@ -7,18 +7,18 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface CurrInfoDao {
+interface CurrListDao {
 
     @Query("SELECT * FROM currencies ORDER BY star DESC")
-    fun getCurrList(): LiveData<List<CurrInfoDbModel>>
+    fun getCurrList(): LiveData<List<CurrListDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addCurrItem(currItemDbModel: CurrInfoDbModel)
+    suspend fun addCurrItem(currListDbModel: CurrListDbModel)
 
     @Query("DELETE FROM currencies WHERE code=:currItemCode")
     suspend fun deleteCurrItem(currItemCode: String)
 
     @Query("SELECT * FROM currencies WHERE code=:currItemCode LIMIT 1")
-    suspend fun getCurrItem(currItemCode: String): CurrInfoDbModel
+    suspend fun getCurrItem(currItemCode: String): CurrListDbModel
 
 }
