@@ -56,7 +56,6 @@ class CurrInfoAdapter :
     }
 
     companion object {
-        const val KEY_FAVOURITE = "favourite"
         private const val CURR_STAR_ENABLED = 1
         private const val CURR_STAR_DISABLED = 0
     }
