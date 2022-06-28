@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../Library/Android/sdk/platforms/android-33/data/res/layout/simple_spinner_item.xml" value="0.13870148835358795" />
         <entry key="..\:/AndroidStudioProjects/Currency/app/src/main/res/drawable/star_rate.xml" value="0.2645" />
         <entry key="..\:/AndroidStudioProjects/Currency/app/src/main/res/layout/activity_main.xml" value="0.259375" />
         <entry key="..\:/AndroidStudioProjects/Currency/app/src/main/res/layout/each_currency.xml" value="0.259375" />
