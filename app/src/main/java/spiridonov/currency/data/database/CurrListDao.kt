@@ -9,8 +9,11 @@ import androidx.room.Query
 @Dao
 interface CurrListDao {
 
-    @Query("SELECT * FROM currencies ORDER BY star DESC")
-    fun getCurrList(): LiveData<List<CurrItemDbModel>>
+    @Query("SELECT * FROM currencies ORDER BY star DESC, name ASC")
+    fun getCurrListLiveData(): LiveData<List<CurrItemDbModel>>
+
+    @Query("SELECT * FROM currencies ORDER BY star DESC, name ASC")
+    suspend fun getSuspendCurrList(): List<CurrItemDbModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addCurrItem(currItemDbModel: CurrItemDbModel)

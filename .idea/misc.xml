@@ -18,8 +18,8 @@
         <entry key="..\:/Users/Admin/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/activity_list_item.xml" value="0.38697916666666665" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/each_currency.xml" value="0.46398021556712954" />
-        <entry key="app/src/main/res/layout/each_currency_disabled.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/each_currency_enabled.xml" value="0.301297844780816" />
+        <entry key="app/src/main/res/layout/each_currency_disabled.xml" value="0.434417724609375" />
+        <entry key="app/src/main/res/layout/each_currency_enabled.xml" value="0.1" />
       </map>
     </option>
   </component>

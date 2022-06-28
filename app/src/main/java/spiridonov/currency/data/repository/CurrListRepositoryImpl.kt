@@ -34,7 +34,7 @@ class CurrListRepositoryImpl(
     }
 
     override fun getCurrList() = Transformations.map(
-        currListDao.getCurrList()
+        currListDao.getCurrListLiveData()
     ) {
         mapper.mapListDbModelToListEntity(it)
     }

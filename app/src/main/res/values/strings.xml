@@ -6,7 +6,7 @@
     <string name="value">%s ₽</string>
     <string name="previous_value">%s ₽</string>
     <string name="rv_curr_list">Currency list</string>
-    <string name="delimiter"> - </string>
+    <string name="delimiter">\u0020-\u0020</string>
     <string name="price">Цена</string>
     <string name="previous_price">Предыдущая Цена</string>
     <string name="is_favorite">Избранное</string>
