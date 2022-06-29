@@ -6,8 +6,6 @@ interface CurrListRepository {
 
     suspend fun addCurrItem(currItem: CurrItem)
 
-    suspend fun deleteCurrItem(currItem: CurrItem)
-
     suspend fun editCurrItem(currItem: CurrItem)
 
     suspend fun getCurrItem(CurrItemCode: String): CurrItem

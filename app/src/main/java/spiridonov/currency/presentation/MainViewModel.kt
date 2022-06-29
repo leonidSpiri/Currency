@@ -21,13 +21,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val currList = getCurrListUseCase()
 
-
     val spinnerOneSelectedPosition = MutableLiveData<String>()
     val editTextCurr = MutableLiveData<String>()
     val spinnerTwoSelectedPosition = MutableLiveData<String>()
     private val _convertValute = MutableLiveData<String>()
     val convertValute: LiveData<String>
         get() = _convertValute
+
+
+
+    fun refreshData() = loadDataUseCase()
 
     fun convertCurrency() {
         val valueFirstSpinner = spinnerOneSelectedPosition.value ?: ""
@@ -42,15 +45,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-    fun changeStarValue(currItem: CurrItem) {
+    fun changeStarValue(currItem: CurrItem) =
         viewModelScope.launch {
             val newItem = currItem.copy(star = !currItem.star)
             editCurrItemUseCase(newItem)
         }
-    }
-
-    fun refreshData() = loadDataUseCase()
 
     private fun getValuteValueFromString(string: String): Double {
         currList.value?.forEach {
