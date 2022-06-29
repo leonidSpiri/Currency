@@ -9,12 +9,13 @@ import spiridonov.currency.R
 import spiridonov.currency.databinding.EachCurrencyDisabledBinding
 import spiridonov.currency.databinding.EachCurrencyEnabledBinding
 import spiridonov.currency.domain.CurrItem
+import spiridonov.currency.presentation.binding
 
 class CurrInfoAdapter :
     ListAdapter<CurrItem, CurrItemViewHolder>(CurrInfoDiffCallback) {
 
+    var onCurrItemStarClickListener: ((CurrItem) -> Unit)? = null
     var onCurrItemClickListener: ((CurrItem) -> Unit)? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrItemViewHolder {
         val layoutID =
             when (viewType) {
@@ -42,15 +43,18 @@ class CurrInfoAdapter :
                 is EachCurrencyDisabledBinding -> {
                     currItem = currency
                     imgStar.setOnClickListener {
-                        onCurrItemClickListener?.invoke(currency)
+                        onCurrItemStarClickListener?.invoke(currency)
                     }
                 }
                 is EachCurrencyEnabledBinding -> {
                     currItem = currency
                     imgStar.setOnClickListener {
-                        onCurrItemClickListener?.invoke(currency)
+                        onCurrItemStarClickListener?.invoke(currency)
                     }
                 }
+            }
+            root.setOnClickListener {
+                onCurrItemClickListener?.invoke(currency)
             }
         }
     }

@@ -7,15 +7,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import spiridonov.currency.data.repository.CurrListRepositoryImpl
-import spiridonov.currency.domain.CurrItem
-import spiridonov.currency.domain.EditCurrItemUseCase
-import spiridonov.currency.domain.GetCurrListUseCase
-import spiridonov.currency.domain.LoadDataUseCase
+import spiridonov.currency.domain.*
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = CurrListRepositoryImpl(application)
     private val getCurrListUseCase = GetCurrListUseCase(repository)
+    private val getCurrItemUseCase = GetCurrItemUseCase(repository)
     private val editCurrItemUseCase = EditCurrItemUseCase(repository)
     private val loadDataUseCase = LoadDataUseCase(repository)
 
@@ -28,7 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val convertValute: LiveData<String>
         get() = _convertValute
 
-
+    fun getDetailCurrInfo(name:String) = getCurrItemUseCase(name)
 
     fun refreshData() = loadDataUseCase()
 

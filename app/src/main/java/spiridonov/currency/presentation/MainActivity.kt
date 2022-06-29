@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         observeViewModels()
         setupRefreshListener()
         inputTextCurrListener()
+        setupStarClickListener()
+        setupCurrItemClickListener()
     }
 
     private fun observeViewModels() {
@@ -51,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         binding.rvCurrList.layoutManager = linearLayoutManager
         currInfoAdapter = CurrInfoAdapter()
         binding.rvCurrList.adapter = currInfoAdapter
-        setupStarClickListener()
     }
 
     private fun setupRefreshListener() {
@@ -61,8 +62,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupStarClickListener() {
+    private fun setupCurrItemClickListener(){
         currInfoAdapter.onCurrItemClickListener = {
+            startActivity(CurrDetailActivity.newIntent(this@MainActivity, it.code))
+        }
+    }
+
+    private fun setupStarClickListener() {
+        currInfoAdapter.onCurrItemStarClickListener = {
             viewModel.changeStarValue(it)
         }
     }

@@ -18,11 +18,8 @@ interface CurrListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addCurrItem(currItemDbModel: CurrItemDbModel)
 
-    @Query("DELETE FROM currencies WHERE code=:currItemCode")
-    suspend fun deleteCurrItem(currItemCode: String)
-
-    @Query("SELECT * FROM currencies WHERE code=:currItemCode LIMIT 1")
-    suspend fun getCurrItem(currItemCode: String): CurrItemDbModel
+    @Query("SELECT * FROM currencies WHERE code == :currItemCode LIMIT 1")
+    fun getCurrItemDb(currItemCode: String): LiveData<CurrItemDbModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCurrList(currList: List<CurrItemDbModel>)

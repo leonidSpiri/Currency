@@ -1,6 +1,7 @@
 package spiridonov.currency.data.repository
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
@@ -9,6 +10,7 @@ import spiridonov.currency.data.mapper.CurrListMapper
 import spiridonov.currency.domain.CurrItem
 import spiridonov.currency.domain.CurrListRepository
 import spiridonov.currency.workers.RefreshDataWorker
+import java.lang.RuntimeException
 
 class CurrListRepositoryImpl(
     private val context: Context
@@ -24,9 +26,10 @@ class CurrListRepositoryImpl(
         currListDao.addCurrItem(mapper.mapEntityToDbModel(currItem))
     }
 
-    override suspend fun getCurrItem(CurrItemCode: String): CurrItem {
-        val dbModel = currListDao.getCurrItem(CurrItemCode)
-        return mapper.mapDbModelToEntity(dbModel)
+    override fun getCurrItem(CurrItemCode: String): LiveData<CurrItem> {
+        return Transformations.map(currListDao.getCurrItemDb(CurrItemCode)) {
+            mapper.mapDbModelToEntity(it ?: throw RuntimeException("CurrItemDbModel was not found"))
+        }
     }
 
     override fun getCurrList() = Transformations.map(
