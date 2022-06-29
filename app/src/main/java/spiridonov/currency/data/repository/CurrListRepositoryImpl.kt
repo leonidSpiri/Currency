@@ -18,10 +18,6 @@ class CurrListRepositoryImpl(
     private val currListDao = AppDatabase.getInstance(context).currListDao()
     private val mapper = CurrListMapper()
 
-    override suspend fun addCurrItem(currItem: CurrItem) {
-        currListDao.addCurrItem(mapper.mapEntityToDbModel(currItem))
-    }
-
     override suspend fun editCurrItem(currItem: CurrItem) {
         currListDao.addCurrItem(mapper.mapEntityToDbModel(currItem))
     }

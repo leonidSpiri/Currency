@@ -1,6 +1,5 @@
 package spiridonov.currency.data.mapper
 
-import android.util.Log
 import org.json.JSONObject
 import spiridonov.currency.data.database.CurrItemDbModel
 import spiridonov.currency.domain.CurrItem

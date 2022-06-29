@@ -5,8 +5,6 @@ import androidx.lifecycle.LiveData
 
 interface CurrListRepository {
 
-    suspend fun addCurrItem(currItem: CurrItem)
-
     suspend fun editCurrItem(currItem: CurrItem)
 
     fun getCurrItem(CurrItemCode: String): LiveData<CurrItem>
