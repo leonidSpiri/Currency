@@ -27,9 +27,8 @@ class RefreshDataWorker(
                     conn.requestMethod = "GET"
                     val scanner = BufferedInputStream(conn.inputStream)
                     val currJsonObject = mapper.mapInputStreamToJsonObject(scanner)
-                    val jsonObject = currJsonObject.getJSONObject(JSON_OBJECT_KEY)
                     val oldCurrList = currListDao.getSuspendCurrList()
-                    val currListDbModel = mapper.mapDtoToListDbModel(jsonObject, oldCurrList)
+                    val currListDbModel = mapper.mapDtoToListDbModel(currJsonObject, oldCurrList)
                     currListDao.insertCurrList(currListDbModel)
                 }
 
@@ -43,7 +42,7 @@ class RefreshDataWorker(
         const val WORK_NAME = "RefreshDataWorker"
         private const val HALF_DAY_IN_MILLIS = 1000 * 60 * 60 * 12L
         private val URL = URL("https://www.cbr-xml-daily.ru/daily_json.js")
-        private const val JSON_OBJECT_KEY = "Valute"
+
 
         fun makeRequest() =
             OneTimeWorkRequestBuilder<RefreshDataWorker>().setConstraints(makeConstraints()).build()

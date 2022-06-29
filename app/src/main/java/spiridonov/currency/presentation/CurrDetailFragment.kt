@@ -8,12 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import spiridonov.currency.databinding.FragmentCurrDetailBinding
 
-private lateinit var viewModel: MainViewModel
-
-private var _binding: FragmentCurrDetailBinding? = null
-val binding get() = _binding ?: throw RuntimeException("FragmentCurrDetailBinding is null")
-
 class CurrDetailFragment : Fragment() {
+    private lateinit var viewModel: MainViewModel
+    private var _binding: FragmentCurrDetailBinding? = null
+    private val binding: FragmentCurrDetailBinding
+        get() = _binding ?: throw RuntimeException("FragmentCurrDetailBinding is null")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,13 +27,14 @@ class CurrDetailFragment : Fragment() {
         val currCode = parseArguments()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.getDetailCurrInfo(currCode).observe(viewLifecycleOwner) {
-            println(it)
+            binding.currItem = it
+            val valueState = it.value.toDouble() - it.previous.toDouble()
+            binding.tvPrice.setTextColor(viewModel.getColorByState(valueState))
         }
     }
 
 
     private fun parseArguments() = requireArguments().getString(ARG_PARAM_ITEM) ?: EMPTY_STRING
-
 
     override fun onDestroy() {
         super.onDestroy()

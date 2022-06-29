@@ -1,6 +1,7 @@
 package spiridonov.currency.presentation
 
 import android.app.Application
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import spiridonov.currency.data.repository.CurrListRepositoryImpl
 import spiridonov.currency.domain.*
+import java.text.DecimalFormat
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -26,21 +28,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val convertValute: LiveData<String>
         get() = _convertValute
 
-    fun getDetailCurrInfo(name:String) = getCurrItemUseCase(name)
+    fun getDetailCurrInfo(name: String) = getCurrItemUseCase(name)
 
     fun refreshData() = loadDataUseCase()
 
-    fun convertCurrency() {
+    fun getDataForConvertor() {
         val valueFirstSpinner = spinnerOneSelectedPosition.value ?: ""
         val valueSecondSpinner = spinnerTwoSelectedPosition.value ?: ""
         val valueEditText = editTextCurr.value ?: ""
-        if (valueFirstSpinner != "" && valueSecondSpinner != "" && valueEditText != "") {
-            val firstValute = getValuteValueFromString(valueFirstSpinner)
-            val secondValute = getValuteValueFromString(valueSecondSpinner)
-            val value = valueEditText.toDouble()
-            val result = value * firstValute / secondValute
-            _convertValute.value = result.toString()
-        }
+        if (valueFirstSpinner != "" && valueSecondSpinner != "" && valueEditText != "")
+            _convertValute.value = convertCurr(valueFirstSpinner, valueSecondSpinner, valueEditText)
+
+    }
+
+    private fun convertCurr(
+        firstCurr: String,
+        secondCurr: String,
+        valueEditText: String
+    ): String {
+        val firstValute = getValuteValueFromString(firstCurr)
+        val secondValute = getValuteValueFromString(secondCurr)
+        val value = valueEditText.toDouble()
+        val result = value * firstValute / secondValute
+        return DECIMAL_VALUE_FORMAT.format(result)
     }
 
     fun changeStarValue(currItem: CurrItem) =
@@ -58,7 +68,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return 1.0
     }
 
+    fun getColorByState(value: Double) = ContextCompat.getColor(
+        getApplication(), if (value >= 0) android.R.color.holo_green_light
+        else android.R.color.holo_red_light
+    )
+
     init {
         refreshData()
+    }
+    companion object{
+           private val DECIMAL_VALUE_FORMAT = DecimalFormat("#.###")
     }
 }

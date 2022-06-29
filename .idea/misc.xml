@@ -17,12 +17,13 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Currency/app/src/main/res/layout/fragment_scrolling.xml" value="0.2453125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Currency/app/src/main/res/layout/list_item.xml" value="0.3729166666666667" />
         <entry key="..\:/Users/Admin/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/activity_list_item.xml" value="0.38697916666666665" />
+        <entry key="app/src/main/res/layout-land/activity_main.xml" value="0.23266754150390628" />
         <entry key="app/src/main/res/layout/activity_curr_detail.xml" value="0.2078125" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.38626251220703123" />
         <entry key="app/src/main/res/layout/each_currency.xml" value="0.46398021556712954" />
         <entry key="app/src/main/res/layout/each_currency_disabled.xml" value="0.434417724609375" />
         <entry key="app/src/main/res/layout/each_currency_enabled.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_curr_detail.xml" value="0.23645833333333333" />
+        <entry key="app/src/main/res/layout/fragment_curr_detail.xml" value="0.37862548828125" />
       </map>
     </option>
   </component>

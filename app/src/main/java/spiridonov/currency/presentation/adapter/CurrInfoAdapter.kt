@@ -9,7 +9,6 @@ import spiridonov.currency.R
 import spiridonov.currency.databinding.EachCurrencyDisabledBinding
 import spiridonov.currency.databinding.EachCurrencyEnabledBinding
 import spiridonov.currency.domain.CurrItem
-import spiridonov.currency.presentation.binding
 
 class CurrInfoAdapter :
     ListAdapter<CurrItem, CurrItemViewHolder>(CurrInfoDiffCallback) {

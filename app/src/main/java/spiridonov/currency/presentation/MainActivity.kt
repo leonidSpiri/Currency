@@ -7,8 +7,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import spiridonov.currency.R
 import spiridonov.currency.databinding.ActivityMainBinding
 import spiridonov.currency.presentation.adapter.CurrInfoAdapter
 
@@ -64,8 +66,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupCurrItemClickListener(){
         currInfoAdapter.onCurrItemClickListener = {
+            if (isOnePaneMode())
             startActivity(CurrDetailActivity.newIntent(this@MainActivity, it.code))
+            else
+                launchFragment(CurrDetailFragment.newInstance(it.code))
         }
+    }
+
+    private fun launchFragment(fragment: Fragment){
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.curr_item_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupStarClickListener() {
@@ -78,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         binding.txtEnter.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 viewModel.editTextCurr.value = s.toString()
-                viewModel.convertCurrency()
+                viewModel.getDataForConvertor()
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -98,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         binding.spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 viewModel.spinnerOneSelectedPosition.value = currListSpinner[p2]
-                viewModel.convertCurrency()
+                viewModel.getDataForConvertor()
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -106,12 +119,15 @@ class MainActivity : AppCompatActivity() {
         binding.spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 viewModel.spinnerTwoSelectedPosition.value = currListSpinner[p2]
-                viewModel.convertCurrency()
+                viewModel.getDataForConvertor()
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
     }
+
+    private fun isOnePaneMode(): Boolean = binding.currItemContainer == null
+
     companion object{
         private const val RUB_CURR = "Российский рубль"
     }

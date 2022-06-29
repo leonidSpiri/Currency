@@ -1,5 +1,6 @@
 package spiridonov.currency.data.mapper
 
+import android.util.Log
 import org.json.JSONObject
 import spiridonov.currency.data.database.CurrItemDbModel
 import spiridonov.currency.domain.CurrItem
@@ -14,7 +15,9 @@ class CurrListMapper {
         name = entity.name,
         value = entity.value,
         previous = entity.previous,
-        star = entity.star
+        star = entity.star,
+        digitalCode = entity.digitalCode,
+        date = entity.date
     )
 
     fun mapDbModelToEntity(currItemDbModel: CurrItemDbModel) = CurrItem(
@@ -22,7 +25,9 @@ class CurrListMapper {
         name = currItemDbModel.name,
         value = currItemDbModel.value,
         previous = currItemDbModel.previous,
-        star = currItemDbModel.star
+        star = currItemDbModel.star,
+        digitalCode = currItemDbModel.digitalCode,
+        date = currItemDbModel.date
     )
 
     fun mapListDbModelToListEntity(list: List<CurrItemDbModel>) = list.map {
@@ -50,14 +55,18 @@ class CurrListMapper {
         oldCurrList: List<CurrItemDbModel>
     ): List<CurrItemDbModel> {
         val currListDbModel = ArrayList<CurrItemDbModel>()
-        val jsonKeys = dto.keys()
+        var date = dto.getString(JSON_OBJECT_TIME_KEY)
+        date = date.replace("T", " ").replace("+03:00", "")
+        val valute = dto.getJSONObject(JSON_OBJECT_VALUTE_KEY)
+        val jsonKeys = valute.keys()
         jsonKeys.forEach { key ->
-            val myObj = dto.getJSONObject(key)
+            val myObj = valute.getJSONObject(key)
             val name = myObj.getString("Name")
             val code = myObj.getString("CharCode")
             val nominal = myObj.getDouble("Nominal")
             val value = myObj.getDouble("Value") / nominal
             val previous = myObj.getDouble("Previous") / nominal
+            val digitalCode = myObj.getString("NumCode")
             var star = false
             oldCurrList.forEach {
                 if (it.code == code) {
@@ -70,10 +79,17 @@ class CurrListMapper {
                     name = name,
                     value = String.format("%.2f", value),
                     previous = String.format("%.2f", previous),
-                    star = star
+                    star = star,
+                    digitalCode = digitalCode,
+                    date = date
                 )
             )
         }
         return currListDbModel
+    }
+
+    companion object{
+        private const val JSON_OBJECT_VALUTE_KEY = "Valute"
+        private const val JSON_OBJECT_TIME_KEY = "Timestamp"
     }
 }

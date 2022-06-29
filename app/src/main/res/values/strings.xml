@@ -10,6 +10,8 @@
     <string name="price">Цена</string>
     <string name="previous_price">Предыдущая Цена</string>
     <string name="is_favorite">Избранное</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="slash">/</string>
+    <string name="in_rub">В рублях</string>
+    <string name="digit_code">Цифровой код</string>
+    <string name="last_updated_label">Обновлено:</string>
 </resources>
