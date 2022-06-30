@@ -1,7 +1,6 @@
 package spiridonov.currency.workers
 
 import android.content.Context
-import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
@@ -31,25 +30,19 @@ class RefreshDataWorker(
                     val currListDbModel = mapper.mapDtoToListDbModel(currJsonObject, oldCurrList)
                     currListDao.insertCurrList(currListDbModel)
                 }
-
             } catch (e: Exception) {
             }
-            delay(HALF_DAY_IN_MILLIS)
+            delay(ONE_HOUR_IN_MILLIS)
         }
     }
 
     companion object {
         const val WORK_NAME = "RefreshDataWorker"
-        private const val HALF_DAY_IN_MILLIS = 1000 * 60 * 60 * 12L
+        private const val ONE_HOUR_IN_MILLIS = 1000 * 60 * 60L
         private val URL = URL("https://www.cbr-xml-daily.ru/daily_json.js")
 
 
         fun makeRequest() =
-            OneTimeWorkRequestBuilder<RefreshDataWorker>().setConstraints(makeConstraints()).build()
-
-        private fun makeConstraints() =
-            Constraints.Builder()
-                .setRequiresBatteryNotLow(true)
-                .build()
+            OneTimeWorkRequestBuilder<RefreshDataWorker>().build()
     }
 }

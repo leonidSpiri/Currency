@@ -30,6 +30,7 @@ class CurrDetailFragment : Fragment() {
             binding.currItem = it
             val valueState = it.value.toDouble() - it.previous.toDouble()
             binding.tvPrice.setTextColor(viewModel.getColorByState(valueState))
+            binding.tvLogoCoin.setTextColor(viewModel.getColorByState(valueState))
         }
     }
 

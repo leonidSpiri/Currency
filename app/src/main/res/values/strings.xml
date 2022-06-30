@@ -14,4 +14,20 @@
     <string name="in_rub">В рублях</string>
     <string name="digit_code">Цифровой код</string>
     <string name="last_updated_label">Обновлено:</string>
+    <string name="USD">＄</string>
+    <string name="CAD">＄</string>
+    <string name="AUD">＄</string>
+    <string name="HKD">＄</string>
+    <string name="EUR">€</string>
+    <string name="GBP">£</string>
+    <string name="BYN">Br</string>
+    <string name="BGN">лв</string>
+    <string name="BRL">R$</string>
+    <string name="HUF">Ft</string>
+    <string name="KRW">₩</string>
+    <string name="DKK">kr</string>
+    <string name="NOK">kr</string>
+    <string name="CNY">¥</string>
+    <string name="CHF">Fr</string>
+    <string name="JPY">¥</string>
 </resources>

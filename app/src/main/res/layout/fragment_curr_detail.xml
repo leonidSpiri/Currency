@@ -20,16 +20,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:context=".presentation.CurrDetailFragment">
 
-        <ImageView
-            android:id="@+id/ivLogoCoin"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="16dp"
-            android:src="@mipmap/ic_launcher"
+        <TextView
+            android:id="@+id/tvLogoCoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:textCurrLogo="@{currItem.code}"
+            android:textSize="100sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/is_favorite" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_curr_code"
@@ -45,7 +45,7 @@
             app:layout_constraintBottom_toTopOf="@+id/tv_curr_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivLogoCoin"
+            app:layout_constraintTop_toBottomOf="@+id/tvLogoCoin"
             tools:text="BTC" />
 
         <TextView
