@@ -105,9 +105,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupSpinnerListener() {
         binding.spinner1.adapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, currListSpinner)
+            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, currListSpinner)
         binding.spinner2.adapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, currListSpinner)
+            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, currListSpinner)
         binding.spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 viewModel.spinnerOneSelectedPosition.value = currListSpinner[p2]

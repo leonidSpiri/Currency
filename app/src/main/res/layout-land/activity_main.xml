@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="@string/currency_exchange"
             android:textColor="@color/main_200"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/txtEnter"
@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:autofillHints="1"
             android:ems="7"
+            android:textSize="16sp"
             android:hint="@string/enter_sum"
             android:inputType="numberDecimal"
             android:textColor="@color/main_200"
@@ -43,7 +44,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/arrow_downward" />
+            android:src="@drawable/arrow_downward"
+            android:contentDescription="@string/is_favorite"/>
 
         <Spinner
             android:id="@+id/spinner2"
@@ -57,7 +59,7 @@
             android:layout_height="wrap_content"
             android:text=""
             android:textColor="@color/main_200"
-            android:textSize="20sp" />
+            android:textSize="15sp" />
 
         <Space
             android:layout_width="wrap_content"
@@ -67,11 +69,6 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/line_color" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/all_valute_text" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/pullToRefresh"

@@ -76,8 +76,8 @@ class CurrListMapper {
                 CurrItemDbModel(
                     code = code,
                     name = name,
-                    value = String.format("%.2f", value),
-                    previous = String.format("%.2f", previous),
+                    value = stringFormat(value),
+                    previous = stringFormat(previous),
                     star = star,
                     digitalCode = digitalCode,
                     date = date
@@ -86,6 +86,8 @@ class CurrListMapper {
         }
         return currListDbModel
     }
+
+    private fun stringFormat(input:Double) = String.format("%.2f", input).replace(",", ".")
 
     companion object{
         private const val JSON_OBJECT_VALUTE_KEY = "Valute"
