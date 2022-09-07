@@ -1,22 +1,22 @@
 package spiridonov.currency.data.repository
 
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
-import spiridonov.currency.data.database.AppDatabase
+import spiridonov.currency.data.database.CurrListDao
 import spiridonov.currency.data.mapper.CurrListMapper
 import spiridonov.currency.domain.CurrItem
 import spiridonov.currency.domain.CurrListRepository
 import spiridonov.currency.workers.RefreshDataWorker
-import java.lang.RuntimeException
+import javax.inject.Inject
 
-class CurrListRepositoryImpl(
-    private val context: Context
+class CurrListRepositoryImpl @Inject constructor(
+    private val application: Application,
+    private val currListDao: CurrListDao,
+    private val mapper: CurrListMapper
 ) : CurrListRepository {
-    private val currListDao = AppDatabase.getInstance(context).currListDao()
-    private val mapper = CurrListMapper()
 
     override suspend fun editCurrItem(currItem: CurrItem) {
         currListDao.addCurrItem(mapper.mapEntityToDbModel(currItem))
@@ -35,7 +35,7 @@ class CurrListRepositoryImpl(
     }
 
     override fun loadData() {
-        WorkManager.getInstance(context)
+        WorkManager.getInstance(application)
             .enqueueUniqueWork(
                 RefreshDataWorker.WORK_NAME,
                 ExistingWorkPolicy.REPLACE,

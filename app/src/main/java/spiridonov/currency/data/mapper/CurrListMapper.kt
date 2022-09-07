@@ -7,8 +7,9 @@ import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import javax.inject.Inject
 
-class CurrListMapper {
+class CurrListMapper @Inject constructor() {
     fun mapEntityToDbModel(entity: CurrItem) = CurrItemDbModel(
         code = entity.code,
         name = entity.name,
@@ -87,9 +88,9 @@ class CurrListMapper {
         return currListDbModel
     }
 
-    private fun stringFormat(input:Double) = String.format("%.2f", input).replace(",", ".")
+    private fun stringFormat(input: Double) = String.format("%.2f", input).replace(",", ".")
 
-    companion object{
+    companion object {
         private const val JSON_OBJECT_VALUTE_KEY = "Valute"
         private const val JSON_OBJECT_TIME_KEY = "Timestamp"
     }

@@ -6,7 +6,7 @@ import androidx.databinding.BindingAdapter
 
 @SuppressLint("DiscouragedApi")
 @BindingAdapter("textCurrLogo")
-fun setTextCurrLogo(textView: TextView, code:String?){
+fun setTextCurrLogo(textView: TextView, code: String?) {
     if (code != null) {
         val resID =
             textView.context.resources?.getIdentifier(code, "string", textView.context.packageName)

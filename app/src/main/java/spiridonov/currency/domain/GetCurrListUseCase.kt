@@ -1,6 +1,8 @@
 package spiridonov.currency.domain
 
-class GetCurrListUseCase(
+import javax.inject.Inject
+
+class GetCurrListUseCase @Inject constructor(
     private val repository: CurrListRepository
 ) {
 
