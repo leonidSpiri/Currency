@@ -7,4 +7,4 @@ Recycle View реализован с помощью List Adapter. За счет 
 
 Реализовано на шаблоне MVVM. Проект разбит на три слоя -  data (работа с данными, их скачка, обработка, сохрание в БД), domain(бизнес-логика) и presentation(IO).
 
-Используются библиотеки Android JetPack (lifecycle-viewModel, Worker, swipeRefreshLayout), Kotlin Coroutines(CoroutineScope, Dispatchers), Room DB
+Используются библиотеки Android JetPack (lifecycle-viewModel, Worker, swipeRefreshLayout), Kotlin Coroutines(CoroutineScope, Dispatchers), Room DB, Google Dagger
