@@ -1,85 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.MainActivity">
+
+    <LinearLayout
+        android:id="@+id/linlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.MainActivity">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/linlay"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/currency_exchange"
+            android:textColor="@color/main_200"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/txtEnter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="1"
+            android:ems="7"
+            android:hint="@string/enter_sum"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+
+            android:textColor="@color/main_200"
+            android:textColorHint="@color/main_200" />
+
+        <Spinner
+            android:id="@+id/spinner1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/currency_exchange"
-                android:textColor="@color/main_200"
-                android:textSize="18sp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/is_favorite"
+            android:src="@drawable/arrow_downward" />
 
-            <EditText
-                android:id="@+id/txtEnter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autofillHints="1"
-                android:ems="7"
-                android:hint="@string/enter_sum"
-                android:inputType="numberDecimal"
-                android:minHeight="48dp"
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-                android:textColor="@color/main_200"
-                android:textColorHint="@color/main_200" />
 
-            <Spinner
-                android:id="@+id/spinner1"
+        <TextView
+            android:id="@+id/txtCurr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/main_200"
+            android:textSize="20sp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="6dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/line_color" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/pullToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_curr_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"
+                android:contentDescription="@string/rv_curr_list" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/arrow_downward"
-                android:contentDescription="@string/is_favorite"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <Spinner
-                android:id="@+id/spinner2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+    </LinearLayout>
 
-
-            <TextView
-                android:id="@+id/txtCurr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/main_200"
-                android:textSize="20sp" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="6dp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/line_color" />
-
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/pullToRefresh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_curr_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/rv_curr_list" />
-
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

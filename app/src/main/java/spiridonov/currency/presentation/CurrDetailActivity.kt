@@ -17,7 +17,6 @@ class CurrDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        Log.d("CurrDetailActivity", "onCreate")
         if (!intent.hasExtra(ARG_PARAM_ITEM))
             finish()
         val currCode = intent.getStringExtra(ARG_PARAM_ITEM) ?: EMPTY_STRING
