@@ -2,22 +2,22 @@ package spiridonov.currency.presentation
 
 import android.app.Application
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import spiridonov.currency.data.repository.CurrListRepositoryImpl
 import spiridonov.currency.domain.*
 import java.text.DecimalFormat
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = CurrListRepositoryImpl(application)
-    private val getCurrListUseCase = GetCurrListUseCase(repository)
-    private val getCurrItemUseCase = GetCurrItemUseCase(repository)
-    private val editCurrItemUseCase = EditCurrItemUseCase(repository)
-    private val loadDataUseCase = LoadDataUseCase(repository)
+class MainViewModel @Inject constructor(
+    private val application: Application,
+    getCurrListUseCase: GetCurrListUseCase,
+    private val getCurrItemUseCase: GetCurrItemUseCase,
+    private val editCurrItemUseCase: EditCurrItemUseCase,
+    private val loadDataUseCase: LoadDataUseCase
+) : ViewModel() {
 
     val currList = getCurrListUseCase()
 
@@ -69,14 +69,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getColorByState(value: Double) = ContextCompat.getColor(
-        getApplication(), if (value >= 0) android.R.color.holo_green_light
+        application, if (value >= 0) android.R.color.holo_green_light
         else android.R.color.holo_red_light
     )
 
     init {
         refreshData()
     }
-    companion object{
-           private val DECIMAL_VALUE_FORMAT = DecimalFormat("#.###")
+
+    companion object {
+        private val DECIMAL_VALUE_FORMAT = DecimalFormat("#.###")
     }
 }

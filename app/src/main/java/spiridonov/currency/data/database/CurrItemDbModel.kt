@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class CurrItemDbModel(
     @PrimaryKey
     val code: String,
-    val digitalCode:String,
+    val digitalCode: String,
     val name: String,
     val value: String,
     val previous: String,

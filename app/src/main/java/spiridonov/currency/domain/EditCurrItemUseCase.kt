@@ -1,7 +1,9 @@
 package spiridonov.currency.domain
 
-class EditCurrItemUseCase(
+import javax.inject.Inject
+
+class EditCurrItemUseCase @Inject constructor(
     private val repository: CurrListRepository
 ) {
-    suspend operator fun invoke(currItem:CurrItem) = repository.editCurrItem(currItem)
+    suspend operator fun invoke(currItem: CurrItem) = repository.editCurrItem(currItem)
 }

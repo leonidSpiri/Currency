@@ -1,7 +1,9 @@
 package spiridonov.currency.domain
 
-class GetCurrItemUseCase(
+import javax.inject.Inject
+
+class GetCurrItemUseCase @Inject constructor(
     private val repository: CurrListRepository
 ) {
-    operator fun invoke(CurrItemCode:String) = repository.getCurrItem(CurrItemCode)
+    operator fun invoke(CurrItemCode: String) = repository.getCurrItem(CurrItemCode)
 }

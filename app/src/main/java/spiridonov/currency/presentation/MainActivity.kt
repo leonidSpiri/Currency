@@ -10,9 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import spiridonov.currency.CurrencyApp
 import spiridonov.currency.R
 import spiridonov.currency.databinding.ActivityMainBinding
 import spiridonov.currency.presentation.adapter.CurrInfoAdapter
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,13 +22,23 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: MainViewModel
+
+    private val component by lazy {
+        (application as CurrencyApp).component
+    }
+
     private lateinit var currInfoAdapter: CurrInfoAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setupRecycleView()
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
         observeViewModels()
         setupRefreshListener()
@@ -64,16 +76,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupCurrItemClickListener(){
+    private fun setupCurrItemClickListener() {
         currInfoAdapter.onCurrItemClickListener = {
             if (isOnePaneMode())
-            startActivity(CurrDetailActivity.newIntent(this@MainActivity, it.code))
+                startActivity(CurrDetailActivity.newIntent(this@MainActivity, it.code))
             else
                 launchFragment(CurrDetailFragment.newInstance(it.code))
         }
     }
 
-    private fun launchFragment(fragment: Fragment){
+    private fun launchFragment(fragment: Fragment) {
         supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.curr_item_container, fragment)
@@ -128,7 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isOnePaneMode(): Boolean = binding.currItemContainer == null
 
-    companion object{
+    companion object {
         private const val RUB_CURR = "Российский рубль"
     }
 }
